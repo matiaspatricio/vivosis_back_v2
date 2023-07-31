@@ -44,7 +44,7 @@ exports.getAllPedidos = async () => {
       console.error('Error al obtener los pedidos de hoy:', error);
       throw error;
     }
-  }; //
+  }; //asd
 
   exports.getPedidosAyer = async () => {
     try {
