@@ -15,7 +15,7 @@ const sequelize = new Sequelize({
         rejectUnauthorized: false // Si tienes el certificado, esto puede ser false, de lo contrario, configúralo en true
       }
     }
-  });
+  },{dialectModule: pg});
 
 
   module.exports = sequelize;
