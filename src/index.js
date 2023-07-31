@@ -4,7 +4,7 @@ const express = require("express");
 async function main() {
     try {
   
-      
+  const port = process.env.PORT || 4000;    
   const sequelize = require("./database/database.js");
   const  express = require("express");
   const app = express();
@@ -40,7 +40,7 @@ async function main() {
       await sequelize.authenticate();
       await sequelize.sync();
       console.log('Connection has been established successfully.');
-      app.listen(4000, () => {
+      app.listen(port, () => {
         console.log("Server running on port 4000");
       });
   
