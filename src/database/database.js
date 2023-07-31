@@ -2,6 +2,8 @@ const Sequelize = require("sequelize");
 const pg = require('pg');
 
 
+const sequelize = new Sequelize(process.env.POSTGRES_URL);
+/*
 const sequelize = new Sequelize({
     database: 'vivosis_test',
     username: 'vivosis_test',
@@ -16,7 +18,7 @@ const sequelize = new Sequelize({
       }
     }
   });
-
+*/
 
   module.exports = sequelize;
 
