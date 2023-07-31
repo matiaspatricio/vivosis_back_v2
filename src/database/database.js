@@ -2,8 +2,7 @@ const Sequelize = require("sequelize");
 const pg = require('pg');
 
 
-const sequelize = new Sequelize(process.env.POSTGRES_URL);
-/*
+
 const sequelize = new Sequelize({
     database: 'vivosis_test',
     username: 'vivosis_test',
@@ -14,11 +13,12 @@ const sequelize = new Sequelize({
     dialectOptions: {
       ssl: {
         require: true,
+        dialectModule: pg,
         rejectUnauthorized: false // Si tienes el certificado, esto puede ser false, de lo contrario, configúralo en true
       }
     }
   });
-*/
+
 
   module.exports = sequelize;
 
