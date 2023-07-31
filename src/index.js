@@ -48,4 +48,4 @@ async function main() {
       console.error('Unable to connect to the database:', error);
     }
   }
-  main();
+  main();//asd
