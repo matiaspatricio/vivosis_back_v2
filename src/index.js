@@ -1,6 +1,6 @@
 const express = require("express");
 //const mongoose = require("mongoose");
-//const cors = require("cors");
+const cors = require("cors");
 async function main() {
     try {
 
@@ -32,7 +32,7 @@ const corsOptions = {
   app.use(cors(corsOptions));
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
-  
+
   app.use("/api/cliente", clienteRouter);
   app.use("/api/puntoentrega", puntoEntregaRouter);
   app.use("/api/direccion", direccionRouter);
