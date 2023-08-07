@@ -3,6 +3,15 @@ const express = require("express");
 //const cors = require("cors");
 async function main() {
     try {
+
+
+      // Configurar las opciones de CORS
+const corsOptions = {
+  origin: ["https://vivosis-frontend.vercel.app", "http://localhost:3000"], // Reemplaza con la URL correcta de tu frontend
+  credentials: true, // Permitir el intercambio de cookies y encabezados de autenticación
+  optionSuccessStatus: 200,
+};
+
   
   const port = process.env.PORT || 4000;    
   const sequelize = require("./database/database.js");
@@ -20,8 +29,10 @@ async function main() {
   const estadoPedidoRouter = require("./routes/EstadoPedidoRoutes.js");
   const estadoPagoRouter = require("./routes/EstadoPagoRoutes.js");
 
-  
+  app.use(cors(corsOptions));
   app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
+  
   app.use("/api/cliente", clienteRouter);
   app.use("/api/puntoentrega", puntoEntregaRouter);
   app.use("/api/direccion", direccionRouter);
