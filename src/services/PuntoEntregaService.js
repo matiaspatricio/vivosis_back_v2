@@ -1,7 +1,10 @@
 const PuntoEntregaModel = require("../models/puntoEntrega");
 
 exports.getAllPuntosEntrega = async () => {
-    return await PuntoEntregaModel.findAll();
+    return await PuntoEntregaModel.findAll({
+      attributes: ["id", "nombre"],
+      
+    });
   };
 
   exports.createPuntoEntrega = async (puntoEntrega) => {
