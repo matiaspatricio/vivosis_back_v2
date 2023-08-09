@@ -11,18 +11,6 @@ const Producto = sequelize.define('Producto', {
         type: DataTypes.STRING(100),
         unique: true
     },
-    costo: {
-        type: DataTypes.DOUBLE,
-        allowNull: false
-    },
-    fecha_costo: {
-        type: DataTypes.DATE,
-        allowNull: true
-    },
-    precio: {
-        type: DataTypes.DOUBLE,
-        allowNull: false
-    },
     categoria: {
         type: DataTypes.INTEGER,
         foreignKey: 'Categoria.id',
@@ -33,10 +21,22 @@ const Producto = sequelize.define('Producto', {
         foreignKey: 'Subcategoria.id',
         allowNull: false
     },
-    stock: {
+    costo: {
         type: DataTypes.DOUBLE,
         allowNull: false
     },    
+    precio: {
+        type: DataTypes.DOUBLE,
+        allowNull: false
+    },
+    stock: {
+        type: DataTypes.DOUBLE,
+        allowNull: false
+    }, 
+    fecha_costo: {
+        type: DataTypes.DATE,
+        allowNull: true
+    },       
     estado: {
         type: DataTypes.INTEGER,
         allowNull: false,
