@@ -27,6 +27,16 @@ exports.getSubcategoriaById = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+exports.getSubcategoriaByIdCategoria = async (req, res) => {
+  try {
+    const subcategoria = await SubcategoriaService.getSubcategoriaByIdCategoria(req.params.id);
+    res.json(subcategoria);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 exports.updateSubcategoria = async (req, res) => {
   try {
     const subcategoria = await SubcategoriaService.updateSubcategoria(req.params.id, req.body);

@@ -9,6 +9,15 @@ exports.getAllSubcategorias = async () => {
   exports.getSubcategoriaById = async (id) => {
     return await SubcategoriaModel.findByPk(id);
   };
+
+  exports.getSubcategoriaByIdCategoria = async (id) => {
+    return await SubcategoriaModel.findAll({
+      where: {
+        categoria_id: id
+
+      }
+    });
+  };
   
   exports.updateSubcategoria = async (id, subcategoriaActualizado) => {
     try {
