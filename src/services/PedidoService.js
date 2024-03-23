@@ -27,16 +27,22 @@ exports.getAllPedidos = async () => {
 
   exports.getPedidosHoy = async () => {
     try {
-      const today = utcToZonedTime(new Date(), timeZone);
-      const startOfTodayDate = zonedTimeToUtc(startOfDay(today), timeZone);
-      const endOfToday = zonedTimeToUtc(endOfDay(today), timeZone);
+      const today = new Date(); // Fecha actual
   
+      // Convertir la fecha a la zona horaria especificada
+      const zonedToday = utcToZonedTime(today, timeZone);
+  
+      // Obtener el inicio y el fin del día actual
+      const startOfToday = zonedTimeToUtc(startOfDay(zonedToday), timeZone);
+      const endOfToday = zonedTimeToUtc(endOfDay(zonedToday), timeZone);
+  
+      // Consultar los pedidos que se encuentran entre las fechas
       const pedidosHoy = await Pedido.findAll({
         where: {
           fecha: {
-            [Op.between]: [startOfTodayDate, endOfToday]
-          }
-        }
+            [Op.between]: [startOfToday, endOfToday],
+          },
+        },
       });
   
       return pedidosHoy;
@@ -44,7 +50,8 @@ exports.getAllPedidos = async () => {
       console.error('Error al obtener los pedidos de hoy:', error);
       throw error;
     }
-  }; //asd
+  };
+  
 
   exports.getPedidosAyer = async () => {
     try {
