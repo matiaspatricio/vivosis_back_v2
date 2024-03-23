@@ -4,10 +4,10 @@ const pg = require('pg');
 
 
 const sequelize = new Sequelize({
-    database: 'vivosis_test',
-    username: 'vivosis_test',
-    password: 'Kwgau0OykPsFezlqGtHF011NhtZcjN5x',
-    host: 'dpg-cj0637b438irjjakpjs0-a.oregon-postgres.render.com',
+    database: 'verceldb',
+    username: 'default',
+    password: 'kV7yrZg0aMmG',
+    host: 'ep-aged-sun-52900944-pooler.us-east-1.aws.neon.tech',
     port: 5432, // Puerto predeterminado de PostgreSQL
     dialect: 'postgres',    
     dialectOptions: {
