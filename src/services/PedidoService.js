@@ -2,6 +2,7 @@ const PedidoModel = require("../models/pedido");
 const { zonedTimeToUtc, utcToZonedTime } = require('date-fns-tz');
 const { startOfDay, endOfDay, subDays, startOfWeek, endOfWeek, startOfToday } = require('date-fns');
 const timeZone = 'America/Argentina/Buenos_Aires';
+const { Op } = require('sequelize'); // Suponiendo que utilizas Sequelize
 
 
 exports.getAllPedidos = async () => {
@@ -10,7 +11,7 @@ exports.getAllPedidos = async () => {
 
   exports.getPedidosPendientes = async () => {
     try {
-      const pedidosPendientes = await Pedido.findAll({
+      const pedidosPendientes = await PedidoModel.findAll({
         where: {
           estado_pedido: {
             [Sequelize.Op.notIn]: [3, 4]
@@ -27,22 +28,18 @@ exports.getAllPedidos = async () => {
 
   exports.getPedidosHoy = async () => {
     try {
-      const today = new Date(); // Fecha actual
+      const today = utcToZonedTime(new Date(), timeZone);
+      const startOfTodayDate = zonedTimeToUtc(startOfDay(today), timeZone);
+      const endOfToday = zonedTimeToUtc(endOfDay(today), timeZone);
   
-      // Convertir la fecha a la zona horaria especificada
-      const zonedToday = utcToZonedTime(today, timeZone);
-  
-      // Obtener el inicio y el fin del día actual
-      const startOfToday = zonedTimeToUtc(startOfDay(zonedToday), timeZone);
-      const endOfToday = zonedTimeToUtc(endOfDay(zonedToday), timeZone);
-  
-      // Consultar los pedidos que se encuentran entre las fechas
-      const pedidosHoy = await Pedido.findAll({
+      console.log(startOfTodayDate)
+      console.log(endOfToday)
+      const pedidosHoy = await PedidoModel.findAll({
         where: {
           fecha: {
-            [Op.between]: [startOfToday, endOfToday],
-          },
-        },
+            [Op.between]: [startOfTodayDate, endOfToday]
+          }
+        }
       });
   
       return pedidosHoy;
@@ -50,8 +47,7 @@ exports.getAllPedidos = async () => {
       console.error('Error al obtener los pedidos de hoy:', error);
       throw error;
     }
-  };
-  
+  }; //asd
 
   exports.getPedidosAyer = async () => {
     try {
@@ -59,7 +55,7 @@ exports.getAllPedidos = async () => {
       const startOfYesterday = zonedTimeToUtc(startOfDay(yesterday), timeZone);
       const endOfYesterday = zonedTimeToUtc(endOfDay(yesterday), timeZone);
   
-      const pedidosAyer = await Pedido.findAll({
+      const pedidosAyer = await PedidoModel.findAll({
         where: {
           fecha: {
             [Op.between]: [startOfYesterday, endOfYesterday]
@@ -80,7 +76,7 @@ exports.getAllPedidos = async () => {
       const startOfThisWeek = startOfWeek(today, { weekStartsOn: 1 }); // 1 represents Monday as the start of the week
       const endOfThisWeek = endOfWeek(today, { weekStartsOn: 1 });
   
-      const pedidosSemana = await Pedido.findAll({
+      const pedidosSemana = await PedidoModel.findAll({
         where: {
           fecha: {
             [Op.between]: [startOfThisWeek, endOfThisWeek]
@@ -104,7 +100,7 @@ exports.getAllPedidos = async () => {
       // Ajustar las fechas para que sean la última hora del día
       const endOfLastWeekWithTime = new Date(endOfLastWeek.getTime() + 86399999);
   
-      const pedidosSemanaAnterior = await Pedido.findAll({
+      const pedidosSemanaAnterior = await PedidoModel.findAll({
         where: {
           fecha: {
             [Op.between]: [startOfLastWeek, endOfLastWeekWithTime]
@@ -121,7 +117,7 @@ exports.getAllPedidos = async () => {
 
   exports.getPedidosMes = async (startOfMonth, endOfMonth) => {
     try {
-      const pedidosMes = await Pedido.findAll({
+      const pedidosMes = await PedidoModel.findAll({
         where: {
           fecha: {
             [Op.between]: [startOfMonth, endOfMonth]
