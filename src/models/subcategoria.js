@@ -12,6 +12,10 @@ const Subcategoria = sequelize.define('Subcategoria', {
     type: DataTypes.STRING(50),
     allowNull: false,
   },
+  padre:{
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
 });
 
 // Establecer la relación entre categorías y subcategorías
