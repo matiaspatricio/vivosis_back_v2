@@ -14,7 +14,7 @@ const Subcategoria = sequelize.define('Subcategoria', {
   },
   padre:{
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
 });
 
