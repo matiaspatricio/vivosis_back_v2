@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../database/database');
 const Categoria = require('./categoria');
 
-const Subcategoria = sequelize.define('Subcategoria', {
+const Subcategoria = sequelize.define('Subcategorias', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -12,7 +12,7 @@ const Subcategoria = sequelize.define('Subcategoria', {
     type: DataTypes.STRING(50),
     allowNull: false,
   },
-  padre:{
+  categoria_id:{
     type: DataTypes.INTEGER,
     allowNull: true,
   },
