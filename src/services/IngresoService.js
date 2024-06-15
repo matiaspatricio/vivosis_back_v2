@@ -1,8 +1,14 @@
 const IngresoModel = require("../models/ingreso");
+const ProductoModel = require("../models/producto");
 
 exports.getAllIngresos = async () => {
-    return await IngresoModel.findAll();
-  };
+  return await IngresoModel.findAll({
+    include: {
+      model: ProductoModel,
+      attributes: ['nombre']
+    }
+  });
+};
 
   exports.createIngreso = async (ingreso) => {
     return await IngresoModel.create(ingreso);

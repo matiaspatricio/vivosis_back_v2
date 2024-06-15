@@ -1,8 +1,9 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require("../database/database.js");
+const PuntoEntrega = require("./puntoEntrega.js")
 
 
-const Cliente = sequelize.define('Clientes', {
+const Clientes = sequelize.define('Clientes', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -29,7 +30,7 @@ const Cliente = sequelize.define('Clientes', {
     email: {
         type: DataTypes.STRING(50),
         allowNull: true,
-        unique: true
+        
     },  
     estado: {
         type: DataTypes.INTEGER,
@@ -44,6 +45,15 @@ const Cliente = sequelize.define('Clientes', {
         type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 1
-    }
+    },
+    referido: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+    },
 });
-module.exports = Cliente
+//ORIGEN 1: VIVOSIS
+//
+
+Clientes.belongsTo(PuntoEntrega, { foreignKey: 'punto_entrega' });
+
+module.exports = Clientes

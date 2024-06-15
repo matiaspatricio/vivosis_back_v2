@@ -1,8 +1,9 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require("../database/database.js");
+const Cliente = require("./cliente.js"); // Import the Cliente model
 
 
-const Pedido = sequelize.define('Pedidos', {
+const Pedido_cabecera = sequelize.define('Pedidos_cabeceras', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -17,24 +18,7 @@ const Pedido = sequelize.define('Pedidos', {
         foreignKey: 'Cliente.id',
         allowNull: false
     },
-    idProducto: {
-        type: DataTypes.INTEGER,
-        foreignKey: 'Producto.id',
-        allowNull: false
-    },
-    cantidad: {
-        type: DataTypes.DOUBLE,
-        allowNull: false
-    },
-    precio: {
-        type: DataTypes.DOUBLE,
-        allowNull: true
-    },
     total: {
-        type: DataTypes.DOUBLE,
-        allowNull: true
-    },
-    costo: {
         type: DataTypes.DOUBLE,
         allowNull: true
     },
@@ -56,16 +40,27 @@ const Pedido = sequelize.define('Pedidos', {
         type: DataTypes.DATE,
         allowNull: true
     },
+    usuario: {
+        type: DataTypes.STRING(50),
+        allowNull: true
+    },  
+    totalEnviado: {
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
+        defaultValue: false
+    },      
     punto_entrega: {
         type: DataTypes.INTEGER,
         foreignKey: 'PuntoEntrega.id',
         allowNull: true
     },
-    usuario: {
-        type: DataTypes.STRING(50),
-        allowNull: true
-    },
-});
-module.exports = Pedido
+    
+    
+},
+{tableName: 'Pedidos_cabecera',}
+);
+module.exports = Pedido_cabecera
 
+
+Pedido_cabecera.belongsTo(Cliente, {foreignKey: 'idCliente', targetKey: 'id'});
 

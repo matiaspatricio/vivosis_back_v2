@@ -37,6 +37,10 @@ const Ingreso = sequelize.define('Ingreso', {
         type: DataTypes.STRING(50),
         allowNull: true
     },
+    comentarios: {
+        type: DataTypes.STRING(100),
+        allowNull: true
+    }
 });
 module.exports = Ingreso
 

@@ -1,5 +1,5 @@
 const PedidoService = require("../services/PedidoService");
-const PedidoModel = require("../models/pedido")
+//const PedidoModel = require("../models/pedido")
 
 
 exports.getAllPedidos = async (req, res) => {
