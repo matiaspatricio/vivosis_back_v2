@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require("../database/database.js");
+const ProductoModel = require("./producto.js");
 
 
 const Ingreso = sequelize.define('Ingreso', {
@@ -44,4 +45,4 @@ const Ingreso = sequelize.define('Ingreso', {
 });
 module.exports = Ingreso
 
-        
+Ingreso.belongsTo(ProductoModel, { foreignKey: 'idProducto' });
