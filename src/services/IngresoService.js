@@ -10,11 +10,13 @@ exports.getAllIngresos = async () => {
   });
 };
 
-  exports.createIngreso = async (ingreso) => {
-    return await IngresoModel.create(ingreso);
-  }
   exports.getIngresoById = async (id) => {
-    return await IngresoModel.findByPk(id);
+    return await IngresoModel.findByPk(id, {
+      include: {
+        model: ProductoModel,
+        attributes: ['nombre']
+      }
+    });
   };
   
   exports.updateIngreso = async (id, ingresoActualizado) => {
