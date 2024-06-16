@@ -1,5 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require("../database/database.js");
+const Categoria = require("./categoria.js")
+const Subcategoria = require("./subcategoria.js")
 
 const Producto = sequelize.define('Productos', {
     id: {
@@ -23,15 +25,15 @@ const Producto = sequelize.define('Productos', {
     },
     costo: {
         type: DataTypes.DOUBLE,
-        allowNull: false
+        allowNull: true
     },    
     precio: {
         type: DataTypes.DOUBLE,
-        allowNull: false
+        allowNull: true
     },
     stock: {
         type: DataTypes.DOUBLE,
-        allowNull: false
+        allowNull: true
     }, 
     fecha_costo: {
         type: DataTypes.DATE,
@@ -46,9 +48,20 @@ const Producto = sequelize.define('Productos', {
         type: DataTypes.STRING(100),
         allowNull: true
     },
+    createdAt: {
+        type: DataTypes.DATE,
+        allowNull: true
+    },
+    updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: true
+    },
 });
 module.exports = Producto
 
-    
+Producto.belongsTo(Categoria, { foreignKey: 'categoria', as: 'Categoria' });
+Producto.belongsTo(Subcategoria, { foreignKey: 'subcategoria', as: 'SubCategoria' });
 
+    
+sequelize.sync({ alter: true });
 

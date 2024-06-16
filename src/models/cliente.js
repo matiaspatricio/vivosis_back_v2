@@ -50,6 +50,15 @@ const Clientes = sequelize.define('Clientes', {
         type: DataTypes.INTEGER,
         allowNull: true
     },
+    createdAt: {
+        type: DataTypes.DATE,
+        allowNull: true
+    },
+    updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: true
+    },
+
 });
 //ORIGEN 1: VIVOSIS
 //

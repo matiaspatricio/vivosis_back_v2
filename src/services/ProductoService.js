@@ -1,8 +1,24 @@
 const ProductoModel = require("../models/producto");
+const CategoriaModel = require("../models/categoria");
+const SubcategoriaModel = require("../models/subcategoria");
 
 exports.getAllProductos = async () => {
-    return await ProductoModel.findAll();
-  };
+  return await ProductoModel.findAll({
+    include: [
+      {
+        model: CategoriaModel,
+        as : 'Categoria',
+        attributes: ['id', 'nombre'],
+      },
+      {
+        model: SubcategoriaModel, // Incluye el modelo de Subcategoria
+        as : 'SubCategoria', // Renombra la relación
+        attributes: ['id', 'nombre'], // Especifica los campos que quieres devolver
+      }
+    ],
+    order: [['nombre', 'ASC']]
+  });
+};
 
   exports.createProducto = async (producto) => {
     return await ProductoModel.create(producto);
