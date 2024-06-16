@@ -11,9 +11,26 @@ exports.getAllProductos = async () => {
         attributes: ['id', 'nombre'],
       },
       {
-        model: SubcategoriaModel, // Incluye el modelo de Subcategoria
-        as : 'SubCategoria', // Renombra la relación
-        attributes: ['id', 'nombre'], // Especifica los campos que quieres devolver
+        model: SubcategoriaModel,
+        as : 'SubCategoria',
+        attributes: ['id', 'nombre'],
+      }
+    ],
+    order: [['nombre', 'ASC']]
+  });
+};
+
+exports.getProductoById = async (id) => {
+  return await ProductoModel.findByPk(id, {
+    include: [
+      {
+        model: CategoriaModel,
+        attributes: ['id', 'nombre'],
+      },
+      {
+        model: SubcategoriaModel,
+        as: 'SubCategoria',
+        attributes: ['id', 'nombre'],
       }
     ],
     order: [['nombre', 'ASC']]
@@ -23,9 +40,7 @@ exports.getAllProductos = async () => {
   exports.createProducto = async (producto) => {
     return await ProductoModel.create(producto);
   }
-  exports.getProductoById = async (id) => {
-    return await ProductoModel.findByPk(id);
-  };
+  
   
   exports.updateProducto = async (id, productoActualizado) => {
     try {
