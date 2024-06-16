@@ -18,7 +18,7 @@ exports.getClienteById = async (id) => {
       {
         model: ClienteModel,
         as: 'Referido',
-        attributes: ['nombre'], // Asegúrate de cambiar 'nombre' por el campo que contiene la descripción del referido
+        attributes: ['id', 'nombre'], // Incluye 'id' y 'nombre' en los atributos a devolver
       }
     ]
   });
