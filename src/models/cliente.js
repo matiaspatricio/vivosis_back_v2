@@ -55,5 +55,7 @@ const Clientes = sequelize.define('Clientes', {
 //
 
 Clientes.belongsTo(PuntoEntrega, { foreignKey: 'punto_entrega' });
+Clientes.belongsTo(Clientes, { as: 'Referido', foreignKey: 'referido' });
+
 
 module.exports = Clientes

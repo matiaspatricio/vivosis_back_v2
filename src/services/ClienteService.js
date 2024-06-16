@@ -1,15 +1,26 @@
 const ClienteModel = require("../models/cliente");
 
 exports.getAllClientes = async () => {
-    return await ClienteModel.findAll();
-  };
+  return await ClienteModel.findAll({
+    order: [['nombre', 'ASC']]
+  });
+};
+exports.getClienteById = async (id) => {
+  return await ClienteModel.findByPk(id, {
+    include: [
+      {
+        model: ClienteModel,
+        as: 'Referido',
+        attributes: ['nombre'], // Asegúrate de cambiar 'nombre' por el campo que contiene la descripción del referido
+      }
+    ]
+  });
+}
 
   exports.createCliente = async (cliente) => {
     return await ClienteModel.create(cliente);
   }
-  exports.getClienteById = async (id) => {
-    return await ClienteModel.findByPk(id);
-  };
+
   
   exports.updateCliente = async (id, clienteActualizado) => {
     try {
