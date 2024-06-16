@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require("../database/database.js");
 
-const PuntoEntrega = sequelize.define('PuntosEntrega', {
+const PuntosEntrega = sequelize.define('PuntosEntrega', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -9,13 +9,11 @@ const PuntoEntrega = sequelize.define('PuntosEntrega', {
     },
     nombre: {
         type: DataTypes.STRING(50)
-          
     },
     comentario: {
         type: DataTypes.STRING(50),
         allowNull: true
     }
-}
-,{tableName: 'PuntosEntrega'}
-);
-module.exports = PuntoEntrega;
+}, { tableName: 'PuntosEntrega' });
+
+module.exports = PuntosEntrega;

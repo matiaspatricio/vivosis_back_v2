@@ -30,6 +30,10 @@ const Ingreso = sequelize.define('Ingreso', {
         type: DataTypes.DOUBLE,
         allowNull: true
     },
+    total: {
+        type: DataTypes.DOUBLE,
+        allowNull: true
+    },
     motivo: {
         type: DataTypes.STRING(100),
         allowNull: true
