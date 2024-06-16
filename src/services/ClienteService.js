@@ -2,6 +2,13 @@ const ClienteModel = require("../models/cliente");
 
 exports.getAllClientes = async () => {
   return await ClienteModel.findAll({
+    include: [
+      {
+        model: ClienteModel,
+        as: 'Referido',
+        attributes: ['nombre'], // Asegúrate de cambiar 'nombre' por el campo que contiene la descripción del referido
+      }
+    ],
     order: [['nombre', 'ASC']]
   });
 };
