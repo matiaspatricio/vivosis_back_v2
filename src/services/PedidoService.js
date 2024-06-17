@@ -15,7 +15,7 @@ exports.getPedidosPendientes = async () => { //version nueva
           },
           include: [{
               model: PedidoDetalleModel,
-              as: 'detalles'
+              as: 'Pedidos_detalles'
           }],
           order: [['id', 'DESC']]
       });
@@ -61,7 +61,7 @@ exports.getPedidosHoy = async () => {
       include: [
         {
           model: PedidoDetalleModel,
-          as: 'detalles'
+          as: 'Pedidos_detalles'
         }
       ],
       order: [['id', 'DESC']]
@@ -91,7 +91,7 @@ exports.getPedidosHoy = async () => {
         include: [
           {
             model: PedidoDetalleModel,
-            as: 'detalles'
+            as: 'Pedidos_detalles'
           }
         ],
         order: [['id', 'DESC']]
@@ -119,7 +119,7 @@ exports.getPedidosHoy = async () => {
         include: [
           {
             model: PedidoDetalleModel,
-            as: 'detalles'
+            as: 'Pedidos_detalles'
           }
         ],
         order: [['id', 'DESC']]
@@ -150,7 +150,7 @@ exports.getPedidosHoy = async () => {
         include: [
           {
             model: PedidoDetalleModel,
-            as: 'detalles'
+            as: 'Pedidos_detalles'
           }
         ],
         order: [['id', 'DESC']]
@@ -174,7 +174,7 @@ exports.getPedidosHoy = async () => {
         include: [
           {
             model: PedidoDetalleModel,
-            as: 'detalles'
+            as: 'Pedidos_detalles'
           }
         ],
         order: [['id', 'DESC']]
@@ -216,7 +216,7 @@ exports.getPedidosHoy = async () => {
         include: [
           {
             model: PedidoDetalleModel,
-            as: 'detalles'
+            as: 'Pedidos_detalles'
           }
         ]
       });
