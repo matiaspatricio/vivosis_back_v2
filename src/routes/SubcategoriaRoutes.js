@@ -3,8 +3,10 @@ const { getAllSubcategorias,createSubcategoria, getSubcategoriaById,updateSubcat
 const router = express.Router();
 
 router.route("/getallsubcategorias").get(getAllSubcategorias);
+router.route("/categoria/:id").get(getSubcategoriaByIdCategoria);
 router.route("/:id").get(getSubcategoriaByIdCategoria).put(updateSubcategoria).delete(deleteSubcategoria);
 router.route("/").post(createSubcategoria);
+
 
 
 

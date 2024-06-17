@@ -15,7 +15,8 @@ exports.getAllSubcategorias = async () => {
       where: {
         categoria_id: id
 
-      }
+      },
+      order: [['nombre', 'ASC']]
     });
   };
   
