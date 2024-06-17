@@ -25,6 +25,7 @@ exports.getProductoById = async (id) => {
     include: [
       {
         model: CategoriaModel,
+        as : 'Categoria',
         attributes: ['id', 'nombre'],
       },
       {
