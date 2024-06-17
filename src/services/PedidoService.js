@@ -33,7 +33,9 @@ exports.getAllPedidos = async () => {
           model: PedidoDetalleModel,
           as: 'Pedidos_detalles'
         }
-      ]
+        
+      ],
+      order: [['id', 'DESC']]
     });
     return pedidos;
   } catch (error) {
