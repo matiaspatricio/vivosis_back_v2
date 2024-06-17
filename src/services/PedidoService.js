@@ -31,7 +31,7 @@ exports.getAllPedidos = async () => {
       include: [
         {
           model: PedidoDetalleModel,
-          as: 'detalles'
+          as: 'Pedidos_detalles'
         }
       ]
     });
