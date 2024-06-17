@@ -6,17 +6,17 @@ exports.getAllIngresos = async () => {
     include: {
       model: ProductoModel,
       attributes: ['nombre']
-    }
+    },
+    order: [['fecha', 'DESC']]
   });
 };
-
-  exports.getIngresoById = async (id) => {
-    return await IngresoModel.findByPk(id, {
-      include: {
-        model: ProductoModel,
-        attributes: ['nombre']
-      }
-    });
+exports.getIngresoById = async (id) => {
+  return await IngresoModel.findByPk(id, {
+    include: {
+      model: ProductoModel,
+      attributes: ['nombre']
+    }
+  });
   };
   
   exports.updateIngreso = async (id, ingresoActualizado) => {
@@ -37,8 +37,7 @@ exports.getAllIngresos = async () => {
     } catch (error) {
       throw new Error("Error al actualizar el ingreso: " + error.message);
     }
-  };
-  
+  };  
   exports.deleteIngreso = async (id) => {
     return await IngresoModel.destroy({ where: { id } });
   };

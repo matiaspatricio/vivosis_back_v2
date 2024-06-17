@@ -1,11 +1,10 @@
 const SubcategoriaModel = require("../models/subcategoria");
 
 exports.getAllSubcategorias = async () => {
-    return await SubcategoriaModel.findAll();
+    return await SubcategoriaModel.findAll({
+      order: [['nombre', 'ASC']]
+    });
   };
-  exports.createSubcategoria = async (subcategoria) => {
-    return await SubcategoriaModel.create(subcategoria);
-  }
   exports.getSubcategoriaById = async (id) => {
     return await SubcategoriaModel.findByPk(id);
   };
@@ -19,6 +18,10 @@ exports.getAllSubcategorias = async () => {
       order: [['nombre', 'ASC']]
     });
   };
+  exports.createSubcategoria = async (subcategoria) => {
+    return await SubcategoriaModel.create(subcategoria);
+  }
+
   
   exports.updateSubcategoria = async (id, subcategoriaActualizado) => {
     try {

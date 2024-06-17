@@ -1,16 +1,16 @@
 const EstadoPagoModel = require("../models/estadoPago");
 
 exports.getAllEstadosPago = async () => {
-    return await EstadoPagoModel.findAll();
+    return await EstadoPagoModel.findAll({
+      order: [['nombre', 'ASC']]    
+    });
   };
-
-  exports.createEstadoPago = async (estadoPago) => {
-    return await EstadoPagoModel.create(estadoPago);
-  }
   exports.getEstadoPagoById = async (id) => {
     return await EstadoPagoModel.findByPk(id);
   };
-  
+  exports.createEstadoPago = async (estadoPago) => {
+    return await EstadoPagoModel.create(estadoPago);
+  };  
   exports.updateEstadoPago = async (id, estadoPagoActualizado) => {
     try {
       // Buscar el estadoPago por su ID
@@ -29,8 +29,7 @@ exports.getAllEstadosPago = async () => {
     } catch (error) {
       throw new Error("Error al actualizar el estadoPago: " + error.message);
     }
-  };
-  
+  };  
   exports.deleteEstadoPago = async (id) => {
     return await EstadoPagoModel.destroy({ where: { id } });
   };

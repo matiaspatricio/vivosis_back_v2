@@ -3,6 +3,7 @@ const PuntoEntregaModel = require("../models/puntoEntrega");
 exports.getAllPuntosEntrega = async () => {
     return await PuntoEntregaModel.findAll({
       attributes: ["id", "nombre"],
+      order: [["nombre", "ASC"]],
       
     });
   };

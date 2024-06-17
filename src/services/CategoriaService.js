@@ -1,16 +1,16 @@
 const CategoriaModel = require("../models/categoria");
 
 exports.getAllCategorias = async () => {
-    return await CategoriaModel.findAll();
+    return await CategoriaModel.findAll({
+      order: [['nombre', 'ASC']]      
+    });
   };
-
-  exports.createCategoria = async (categoria) => {
-    return await CategoriaModel.create(categoria);
-  }
   exports.getCategoriaById = async (id) => {
     return await CategoriaModel.findByPk(id);
   };
-  
+  exports.createCategoria = async (categoria) => {
+    return await CategoriaModel.create(categoria);
+  }  
   exports.updateCategoria = async (id, categoriaActualizado) => {
     try {
       // Buscar el categoria por su ID

@@ -61,8 +61,11 @@ exports.getPedidosHoy = async () => {
           model: PedidoDetalleModel,
           as: 'detalles'
         }
-      ]
-    });
+      ],
+      order: [['id', 'DESC']]
+    },
+    
+  );
 
       return pedidosHoy;
     } catch (error) {
@@ -88,7 +91,8 @@ exports.getPedidosHoy = async () => {
             model: PedidoDetalleModel,
             as: 'detalles'
           }
-        ]
+        ],
+        order: [['id', 'DESC']]
       });
 
       return pedidosAyer;
@@ -115,7 +119,8 @@ exports.getPedidosHoy = async () => {
             model: PedidoDetalleModel,
             as: 'detalles'
           }
-        ]
+        ],
+        order: [['id', 'DESC']]
       });
 
       return pedidosSemana;
@@ -145,7 +150,8 @@ exports.getPedidosHoy = async () => {
             model: PedidoDetalleModel,
             as: 'detalles'
           }
-        ]
+        ],
+        order: [['id', 'DESC']]
       });
 
       return pedidosSemanaAnterior;
@@ -168,7 +174,8 @@ exports.getPedidosHoy = async () => {
             model: PedidoDetalleModel,
             as: 'detalles'
           }
-        ]
+        ],
+        order: [['id', 'DESC']]
       });
 
       return pedidosMes;
