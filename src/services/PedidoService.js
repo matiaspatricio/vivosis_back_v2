@@ -289,7 +289,9 @@ exports.getPedidosHoy = async () => {
   exports.updatePedido = async (pedidoActualizado) => {
     try {      
       const pedidoCabecera = await PedidoCabeceraModel.findByPk(pedidoActualizado.id);
-      if (!pedidoActualizado.pedidoCabecera) {
+      console.log("pedidoCabecera!!!",pedidoCabecera);
+      console.log("pedidoActualizado???",pedidoActualizado);
+      if (!pedidoCabecera) {
         throw new Error("Pedido no encontrado");
       }
       //validar si es solo actualización de cabecera
