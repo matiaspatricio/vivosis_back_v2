@@ -7,35 +7,36 @@ const { Op } = require('sequelize');
 const ClienteModel = require("../models/cliente");
 const ProductoModel = require("../models/producto");
 
-exports.getPedidosPendientes = async () => { //version nueva
+exports.getPedidosPendientes = async () => {
   try {
-      const pedidosPendientes = await PedidoCabeceraModel.findAll({
-          where: {
-              estado_pedido: {
-                  [Op.notIn]: [3, 4]
-              }
-          },
-          include: [{
-              model: PedidoDetalleModel,
-              as: 'Pedidos_detalles'
-          },
-          {
-            model: ClienteModel,
-            as : 'Cliente',
-            attributes: ['id', 'nombre']
-          },
-          {
-            model: ProductoModel, // Incluye el modelo de Producto
-            as : 'Producto', // Alias para el modelo de Producto
-            attributes: ['id','nombre'], // Especifica que quieres devolver el campo 'descripcion'
-          }
-        ],
-          order: [['id', 'DESC']]
-      });
-      return pedidosPendientes;
+    const pedidosPendientes = await PedidoCabeceraModel.findAll({
+      where: {
+        estado_pedido: {
+          [Op.notIn]: [3, 4]
+        }
+      },
+      include: [
+        {
+          model: ClienteModel,
+          as : 'Cliente',
+          attributes: ['id', 'nombre']
+        },
+        {
+          model: PedidoDetalleModel,
+          as: 'Pedidos_detalles',
+          include: [
+            {
+              model: ProductoModel, // Incluye el modelo de Producto
+              as : 'Producto', // Alias para el modelo de Producto
+              attributes: ['id','nombre'], // Especifica que quieres devolver el campo 'nombre'
+            }
+          ]
+        }
+      ]
+    });
+    return pedidosPendientes;
   } catch (error) {
-      console.error('Error al obtener los pedidos pendientes:', error);
-      throw error;
+    console.error(error);
   }
 };
 exports.getAllPedidos = async () => {
