@@ -51,7 +51,7 @@ const Pedido_cabecera = sequelize.define('Pedidos_cabeceras', {
     },      
     punto_entrega: {
         type: DataTypes.INTEGER,
-        foreignKey: 'PuntoEntrega.id',
+        foreignKey: 'PuntosEntrega.id',
         allowNull: true
     },
     
@@ -64,3 +64,9 @@ module.exports = Pedido_cabecera
 
 Pedido_cabecera.belongsTo(Cliente, {foreignKey: 'idCliente', targetKey: 'id'});
 
+//sync 
+
+
+sequelize.sync()
+  .then(() => console.log('Base de datos sincronizada'))
+  .catch((error) => console.log('Error al sincronizar la base de datos:', error));

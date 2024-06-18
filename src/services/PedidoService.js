@@ -4,6 +4,7 @@ const { zonedTimeToUtc, utcToZonedTime } = require('date-fns-tz');
 const { startOfDay, endOfDay, subDays, startOfWeek, endOfWeek, startOfToday } = require('date-fns');
 const timeZone = 'America/Argentina/Buenos_Aires';
 const { Op } = require('sequelize');
+const ClienteModel = require("../models/cliente");
 
 exports.getPedidosPendientes = async () => { //version nueva
   try {
@@ -16,7 +17,12 @@ exports.getPedidosPendientes = async () => { //version nueva
           include: [{
               model: PedidoDetalleModel,
               as: 'Pedidos_detalles'
-          }],
+          },
+          {
+            model: ClienteModel,
+            attributes: ['id', 'nombre']
+          }
+        ],
           order: [['id', 'DESC']]
       });
       return pedidosPendientes;
@@ -32,6 +38,10 @@ exports.getAllPedidos = async () => {
         {
           model: PedidoDetalleModel,
           as: 'Pedidos_detalles'
+        },
+        {
+          model: ClienteModel,
+          attributes: ['id', 'nombre']
         }
         
       ],
@@ -62,6 +72,10 @@ exports.getPedidosHoy = async () => {
         {
           model: PedidoDetalleModel,
           as: 'Pedidos_detalles'
+        },
+        {
+          model: ClienteModel,
+          attributes: ['id', 'nombre']
         }
       ],
       order: [['id', 'DESC']]
@@ -92,6 +106,10 @@ exports.getPedidosHoy = async () => {
           {
             model: PedidoDetalleModel,
             as: 'Pedidos_detalles'
+          },
+          {
+            model: ClienteModel,
+            attributes: ['id', 'nombre']
           }
         ],
         order: [['id', 'DESC']]
@@ -120,6 +138,10 @@ exports.getPedidosHoy = async () => {
           {
             model: PedidoDetalleModel,
             as: 'Pedidos_detalles'
+          },
+          {
+            model: ClienteModel,
+            attributes: ['id', 'nombre']
           }
         ],
         order: [['id', 'DESC']]
@@ -151,6 +173,10 @@ exports.getPedidosHoy = async () => {
           {
             model: PedidoDetalleModel,
             as: 'Pedidos_detalles'
+          },
+          {
+            model: ClienteModel,
+            attributes: ['id', 'nombre']
           }
         ],
         order: [['id', 'DESC']]
@@ -175,6 +201,10 @@ exports.getPedidosHoy = async () => {
           {
             model: PedidoDetalleModel,
             as: 'Pedidos_detalles'
+          },
+          {
+            model: ClienteModel,
+            attributes: ['id', 'nombre']
           }
         ],
         order: [['id', 'DESC']]
@@ -217,6 +247,10 @@ exports.getPedidosHoy = async () => {
           {
             model: PedidoDetalleModel,
             as: 'Pedidos_detalles'
+          },
+          {
+            model: ClienteModel,
+            attributes: ['id', 'nombre']
           }
         ]
       });
