@@ -5,6 +5,7 @@ const { startOfDay, endOfDay, subDays, startOfWeek, endOfWeek, startOfToday } = 
 const timeZone = 'America/Argentina/Buenos_Aires';
 const { Op } = require('sequelize');
 const ClienteModel = require("../models/cliente");
+const ProductoModel = require("../models/producto");
 
 exports.getPedidosPendientes = async () => { //version nueva
   try {
