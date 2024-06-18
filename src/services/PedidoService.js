@@ -20,7 +20,13 @@ exports.getPedidosPendientes = async () => { //version nueva
           },
           {
             model: ClienteModel,
+            as : 'Cliente',
             attributes: ['id', 'nombre']
+          },
+          {
+            model: ProductoModel, // Incluye el modelo de Producto
+            as : 'Producto', // Alias para el modelo de Producto
+            attributes: ['id','nombre'], // Especifica que quieres devolver el campo 'descripcion'
           }
         ],
           order: [['id', 'DESC']]
@@ -41,7 +47,13 @@ exports.getAllPedidos = async () => {
         },
         {
           model: ClienteModel,
+          as : 'Cliente',
           attributes: ['id', 'nombre']
+        },
+        {
+          model: ProductoModel, // Incluye el modelo de Producto
+          as : 'Producto', // Alias para el modelo de Producto
+          attributes: ['id','nombre'], // Especifica que quieres devolver el campo 'descripcion'
         }
         
       ],
@@ -75,6 +87,7 @@ exports.getPedidosHoy = async () => {
         },
         {
           model: ClienteModel,
+          as : 'Cliente',
           attributes: ['id', 'nombre']
         }
       ],
@@ -250,7 +263,13 @@ exports.getPedidosHoy = async () => {
           },
           {
             model: ClienteModel,
+            as : 'Cliente',
             attributes: ['id', 'nombre']
+          },
+          {
+            model: ProductoModel, // Incluye el modelo de Producto
+            as : 'Producto', // Alias para el modelo de Producto
+            attributes: ['id','nombre'], // Especifica que quieres devolver el campo 'descripcion'
           }
         ]
       });

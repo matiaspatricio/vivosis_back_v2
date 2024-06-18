@@ -29,12 +29,14 @@ const Pedido_cabecera = sequelize.define('Pedidos_cabeceras', {
     estado_pedido: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        defaultValue: 1
+        defaultValue: 1,
+        foreignKey: 'EstadoPedidos.id',
     },
     estado_pago: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        defaultValue: 1
+        defaultValue: 1,
+        foreignKey: 'EstadoPagos.id',
     },
     fecha_entrega: {
         type: DataTypes.DATE,
