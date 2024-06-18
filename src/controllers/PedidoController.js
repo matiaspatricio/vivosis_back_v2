@@ -101,8 +101,8 @@ exports.getPedidoByCliente = async (req, res) => {
 };
 
 exports.updatePedido = async (req, res) => {
-  try {
-    const pedido = await PedidoService.updatePedido(req.params.id, req.body);
+  try {    
+    const pedido = await PedidoService.updatePedido(req.body);    
     res.json(pedido);
   } catch (err) {
     res.status(500).json({ error: err.message });

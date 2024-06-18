@@ -286,25 +286,32 @@ exports.getPedidosHoy = async () => {
     }
   };
 
-  exports.updatePedido = async (id, pedidoActualizado) => {
-    try {
-      // Buscar el pedido por su ID
-      const pedidoCabecera = await PedidoCabeceraModel.findByPk(id);
-
-      if (!pedidoCabecera) {
+  exports.updatePedido = async (pedidoActualizado) => {
+    try {      
+      const pedidoCabecera = await PedidoCabeceraModel.findByPk(pedidoActualizado.id);
+      if (!pedidoActualizado.pedidoCabecera) {
         throw new Error("Pedido no encontrado");
+      }
+      //validar si es solo actualización de cabecera
+      if(pedidoActualizado.isCabecera){
+        // Actualizar los campos deseados del pedido
+        await pedidoCabecera.update(pedidoActualizado);
+        return pedidoCabecera;
       }
 
       // Actualizar los campos deseados del pedido
       await pedidoCabecera.update(pedidoActualizado);
 
       // Actualizar los detalles del pedido
-      await PedidoDetalleModel.destroy({ where: { pedido_cabecera_id: pedidoCabecera.id } });
-      await PedidoDetalleModel.bulkCreate(pedidoActualizado.detalles.map(detalle => ({
-        ...detalle,
-        pedido_cabecera_id: pedidoCabecera.id
-      })));
-
+      // si isDetalle es true, se actualizan los detalles
+      if (isDetalle) {
+        // Eliminar los detalles del pedido
+        await PedidoDetalleModel.destroy({ where: { pedido_cabecera_id: pedidoCabecera.id } });
+        await PedidoDetalleModel.bulkCreate(pedidoActualizado.detalles.map(detalle => ({
+          ...detalle,
+          pedido_cabecera_id: pedidoCabecera.id
+        })));
+      }
       // El pedido actualizado se encuentra ahora en el objeto 'pedidoCabecera'
 
       return pedidoCabecera;
