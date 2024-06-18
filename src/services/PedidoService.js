@@ -44,20 +44,21 @@ exports.getAllPedidos = async () => {
     const pedidos = await PedidoCabeceraModel.findAll({
       include: [
         {
-          model: PedidoDetalleModel,
-          as: 'Pedidos_detalles'
-        },
-        {
           model: ClienteModel,
           as : 'Cliente',
           attributes: ['id', 'nombre']
         },
         {
-          model: ProductoModel, // Incluye el modelo de Producto
-          as : 'Producto', // Alias para el modelo de Producto
-          attributes: ['id','nombre'], // Especifica que quieres devolver el campo 'descripcion'
+          model: PedidoDetalleModel,
+          as: 'Pedidos_detalles',
+          include: [
+            {
+              model: ProductoModel, // Incluye el modelo de Producto
+              as : 'Producto', // Alias para el modelo de Producto
+              attributes: ['id','nombre'], // Especifica que quieres devolver el campo 'nombre'
+            }
+          ]
         }
-        
       ],
       order: [['id', 'DESC']]
     });
@@ -260,18 +261,20 @@ exports.getPedidosHoy = async () => {
       const pedidoCabecera = await PedidoCabeceraModel.findByPk(id, {
         include: [
           {
-            model: PedidoDetalleModel,
-            as: 'Pedidos_detalles'
-          },
-          {
             model: ClienteModel,
             as : 'Cliente',
             attributes: ['id', 'nombre']
           },
           {
-            model: ProductoModel, // Incluye el modelo de Producto
-            as : 'Producto', // Alias para el modelo de Producto
-            attributes: ['id','nombre'], // Especifica que quieres devolver el campo 'descripcion'
+            model: PedidoDetalleModel,
+            as: 'Pedidos_detalles',
+            include: [
+              {
+                model: ProductoModel, // Incluye el modelo de Producto
+                as : 'Producto', // Alias para el modelo de Producto
+                attributes: ['id','nombre'], // Especifica que quieres devolver el campo 'nombre'
+              }
+            ]
           }
         ]
       });
