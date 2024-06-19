@@ -38,6 +38,13 @@ exports.getProductoById = async (id) => {
   });
 };
 
+exports.getProductosIdNombre = async () => {
+  return await ProductoModel.findAll({
+    attributes: ['id', 'nombre'], // Selecciona sólo los atributos 'id' y 'nombre'
+    order: [['nombre', 'ASC']] // Ordena los productos por nombre en orden ascendente
+  });
+};
+
   exports.createProducto = async (producto) => {
     return await ProductoModel.create(producto);
   }

@@ -11,6 +11,15 @@ exports.getAllProductos = async (req, res) => {
       }
     };
 
+exports.getProductosIdNombre = async (req, res) => {
+  try {
+    const productos = await ProductoService.getProductosIdNombre();
+    res.json(productos);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 exports.createProducto = async (req, res) => {
   try {
     const producto = await ProductoService.createProducto(req.body);
