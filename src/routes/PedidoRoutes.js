@@ -11,7 +11,9 @@ const {
     getPedidosAyer,
     getPedidosSemana,
     getPedidosSemanaAnterior,
-    getPedidosMes
+    getPedidosMes,
+    updatePedidoCabecera,
+    updatePedidoDetalle
   } = require("../controllers/PedidoController");
 const router = express.Router();
 
@@ -23,6 +25,8 @@ router.route('/getpedidossemana').get(getPedidosSemana);
 router.route('/getpedidossemanaanterior').get(getPedidosSemanaAnterior);
 router.route('/getpedidosmes').get(getPedidosMes);
 router.route('/getpedidoshoy').get(getPedidosHoy);
+router.route('cabecera/:id').put(updatePedidoCabecera);
+router.route('/detalle/:id').put(updatePedidoDetalle);
 
 
 
