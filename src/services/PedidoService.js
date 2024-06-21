@@ -316,16 +316,19 @@ exports.updatePedidoDetalle = async (id, pedidoDetalleActualizado) => {
     if (!pedidoCabecera) {
       throw new Error("Pedido no encontrado");
     }
-    console.log("pedidoDetalleActualizado", pedidoDetalleActualizado);
-    if (pedidoDetalleActualizado && pedidoDetalleActualizado.length > 0) {
+    if (pedidoDetalleActualizado) {
       for (let detalle of pedidoDetalleActualizado.Pedidos_detalles) {
-        const existingDetalle = await PedidoDetalleModel.findOne({ where: { id: detalle.id } });
-        console.log("Existing detalle", existingDetalle);
-        if (existingDetalle) {  
-          
-          await existingDetalle.update(detalle);
+        const existingDetalle = await PedidoDetalleModel.findOne({
+          where: { id: detalle.id },
+        });
+
+        if (existingDetalle) {
+          await existingDetalle.update(existingDetalle);
         } else {
-          await PedidoDetalleModel.create({ ...detalle, pedido_id: pedidoCabecera.id });
+          await PedidoDetalleModel.create({
+            ...detalle,
+            pedido_id: pedidoCabecera.id,
+          });
         }
       }
     }
