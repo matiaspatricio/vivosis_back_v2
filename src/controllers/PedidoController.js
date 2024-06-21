@@ -151,8 +151,7 @@ exports.updatePedidoCabecera = async (req, res) => {
 
 exports.updatePedidoDetalle = async (req, res) => {
   try {
-    const pedido = await PedidoService.updatePedidoDetalle(
-      req.params.id,
+    const pedido = await PedidoService.updatePedidoDetalle(      
       req.body
     );
     res.json(pedido);

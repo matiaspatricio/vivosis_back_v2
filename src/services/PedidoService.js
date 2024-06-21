@@ -312,6 +312,7 @@ exports.updatePedidoCabecera = async (id, pedidoCabeceraActualizado) => {
 
 exports.updatePedidoDetalle = async (pedidoDetalleActualizado) => {
   try {
+    console.log("pedidoDetalleActualizado", pedidoDetalleActualizado)
     const pedidoCabecera = await PedidoCabeceraModel.findByPk(pedidoDetalleActualizado.id);
     if (!pedidoCabecera) {
       throw new Error("Pedido no encontrado");
