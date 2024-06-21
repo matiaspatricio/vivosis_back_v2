@@ -296,9 +296,9 @@ exports.getPedidoById = async (id) => {
   }
 };
 
-exports.updatePedidoCabecera = async (pedidoCabeceraActualizado) => {
+exports.updatePedidoCabecera = async (id, pedidoCabeceraActualizado) => {
   try {
-    const pedidoCabecera = await PedidoCabeceraModel.findByPk(pedidoCabeceraActualizado.id);
+    const pedidoCabecera = await PedidoCabeceraModel.findByPk(id);
     if (!pedidoCabecera) {
       throw new Error("Pedido no encontrado");
     }
@@ -310,20 +310,24 @@ exports.updatePedidoCabecera = async (pedidoCabeceraActualizado) => {
   }
 };
 
-exports.updatePedidoDetalle = async (pedidoDetalleActualizado) => {
+exports.updatePedidoDetalle = async (id, pedidoDetalleActualizado) => {
   try {
-    const pedidoCabecera = await PedidoCabeceraModel.findByPk(pedidoDetalleActualizado.pedido_id);
+    const pedidoCabecera = await PedidoCabeceraModel.findByPk(id);
     if (!pedidoCabecera) {
       throw new Error("Pedido no encontrado");
     }
-    if (pedidoDetalleActualizado.Pedidos_detalles && pedidoDetalleActualizado.Pedidos_detalles.length > 0) {
-      await PedidoDetalleModel.destroy({ where: { pedido_id: pedidoCabecera.id } });
-      await PedidoDetalleModel.bulkCreate(
-        pedidoDetalleActualizado.Pedidos_detalles.map((detalle) => ({
-          ...detalle,
-          pedido_id: pedidoCabecera.id,
-        }))
-      );
+    console.log("pedidoDetalleActualizado", pedidoDetalleActualizado);
+    if (pedidoDetalleActualizado && pedidoDetalleActualizado.length > 0) {
+      for (let detalle of pedidoDetalleActualizado.Pedidos_detalles) {
+        const existingDetalle = await PedidoDetalleModel.findOne({ where: { id: detalle.id } });
+        console.log("Existing detalle", existingDetalle);
+        if (existingDetalle) {  
+          
+          await existingDetalle.update(detalle);
+        } else {
+          await PedidoDetalleModel.create({ ...detalle, pedido_id: pedidoCabecera.id });
+        }
+      }
     }
     return pedidoCabecera;
   } catch (error) {
