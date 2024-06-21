@@ -310,9 +310,9 @@ exports.updatePedidoCabecera = async (id, pedidoCabeceraActualizado) => {
   }
 };
 
-exports.updatePedidoDetalle = async (id, pedidoDetalleActualizado) => {
+exports.updatePedidoDetalle = async (pedidoDetalleActualizado) => {
   try {
-    const pedidoCabecera = await PedidoCabeceraModel.findByPk(id);
+    const pedidoCabecera = await PedidoCabeceraModel.findByPk(pedidoDetalleActualizado.id);
     if (!pedidoCabecera) {
       throw new Error("Pedido no encontrado");
     }
