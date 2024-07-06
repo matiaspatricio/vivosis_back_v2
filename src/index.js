@@ -8,7 +8,9 @@ async function main() {
 const corsOptions = {
   origin: ["https://vivosis-frontend.vercel.app", "http://localhost:3000"], // Reemplaza con la URL correcta de tu frontend
   credentials: true, // Permitir el intercambio de cookies y encabezados de autenticación
-  optionSuccessStatus: 200,
+  optionsSuccessStatus: 200,
+
+  
 };
 
   

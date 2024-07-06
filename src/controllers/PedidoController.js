@@ -117,6 +117,15 @@ exports.getPedidoById = async (req, res) => {
   }
 };
 
+exports.getPedidoItemById = async (req, res) => {
+  try {
+    const pedido = await PedidoService.getPedidoItemById(req.params.pedido_id, req.params.id);
+    res.json(pedido);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
+
 exports.getPedidoByCliente = async (req, res) => {
   try {
     const pedido = await PedidoService.getPedidoByCliente(
@@ -168,3 +177,20 @@ exports.deletePedido = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+exports.deleteItemPedido = async (req, res) => {
+  try {    
+    const pedido = await PedidoService.deleteItemPedido(req.body.pedido_id,req.body.id);
+    res.json(pedido);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+exports.eliminadoLogicoItemPedido = async (req, res) => {
+  try {    
+    const pedido = await PedidoService.eliminadoLogicoItemPedido(req.body.pedido_id,req.body.id,req.body.producto_id,req.body.cantidad);
+    res.json(pedido);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}

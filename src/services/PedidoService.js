@@ -13,6 +13,7 @@ const timeZone = "America/Argentina/Buenos_Aires";
 const { Op } = require("sequelize");
 const ClienteModel = require("../models/cliente");
 const ProductoModel = require("../models/producto");
+const ProductoService = require("./ProductoService");
 
 exports.getPedidosPendientes = async () => {
   try {
@@ -296,6 +297,31 @@ exports.getPedidoById = async (id) => {
   }
 };
 
+exports.getPedidoItemById = async (pedido_id, item_id) => {
+  try {
+    // Buscar el detalle del pedido por pedido_id y item_id
+    const pedidoDetalle = await PedidoDetalleModel.findOne({
+      where: { id: item_id, pedido_id: pedido_id },
+      include: [
+        {
+          model: ProductoModel,
+          as: "Producto",
+          attributes: ["id", "nombre"],
+        },
+      ],
+    });
+
+    if (!pedidoDetalle) {
+      throw new Error("Item no encontrado");
+    }
+
+    return pedidoDetalle;
+  } catch (error) {
+    console.error("Error al obtener el item del pedido por ID:", error);
+    throw error;
+  }
+};
+
 exports.updatePedidoCabecera = async (id, pedidoCabeceraActualizado) => {
   try {
     const pedidoCabecera = await PedidoCabeceraModel.findByPk(id);
@@ -312,16 +338,21 @@ exports.updatePedidoCabecera = async (id, pedidoCabeceraActualizado) => {
 
 exports.updatePedidoDetalle = async (pedidoDetalleActualizado) => {
   try {
-    console.log("pedidoDetalleActualizado", pedidoDetalleActualizado)
-    const pedidoCabecera = await PedidoCabeceraModel.findByPk(pedidoDetalleActualizado.id);
+    console.log("pedidoDetalleActualizado", pedidoDetalleActualizado);
+    console.log("Detalle", pedidoDetalleActualizado.Pedidos_detalles);
+    const pedidoCabecera = await PedidoCabeceraModel.findByPk(
+      pedidoDetalleActualizado.id
+    );
     if (!pedidoCabecera) {
       throw new Error("Pedido no encontrado");
     }
     if (pedidoDetalleActualizado) {
       for (let detalle of pedidoDetalleActualizado.Pedidos_detalles) {
+        console.log("check");
         const existingDetalle = await PedidoDetalleModel.findOne({
           where: { id: detalle.id },
         });
+        console.log("existingDetalle", existingDetalle);
 
         if (existingDetalle) {
           await existingDetalle.update(existingDetalle);
@@ -387,7 +418,8 @@ exports.updatePedido = async (pedidoActualizado) => {
 exports.deletePedido = async (id) => {
   try {
     // Eliminar los detalles del pedido
-    await PedidoDetalleModel.destroy({ where: { pedido_cabecera_id: id } });
+    console.log("ingresando a pedido_cabecera_id", id);
+    await PedidoDetalleModel.destroy({ where: { pedido_id: id } });
 
     // Eliminar la cabecera del pedido
     const deletedRows = await PedidoCabeceraModel.destroy({ where: { id } });
@@ -398,3 +430,41 @@ exports.deletePedido = async (id) => {
     throw error;
   }
 };
+
+exports.deleteItemPedido = async (pedido_id, id) => {
+  try {
+    console.log("ingresando a pedido_detalle_id",pedido_id, id);
+    // Eliminar los detalles del pedido
+    await PedidoDetalleModel.destroy({ where: { pedido_id: pedido_id, id } });
+
+    return id;
+  } catch (error) {
+    console.error("Error al eliminar el item del pedido:", error);
+    throw error;
+  }
+};
+exports.eliminadoLogicoItemPedido = async (pedido_id, id,producto_id,cantidad) => {
+  try {
+    console.log("ingresando a pedido_detalle_id",pedido_id, id);
+    // Eliminar los detalles del pedido
+    await PedidoDetalleModel.update({estado_item: 6, estado_pago_item: 6},{ where: { pedido_id: pedido_id, id } });
+    await ProductoService.actualizarStock(producto_id,cantidad);
+    return id;
+  } catch (error) {
+    console.error("Error al eliminar el item del pedido:", error);
+    throw error;
+  }
+}
+
+exports.updatePedidoItem = async (pedido_id, id, pedidoDetalleActualizado) => {
+  try {
+    console.log("ingresando a pedido_detalle_id",pedido_id, id);
+    // Eliminar los detalles del pedido
+    await PedidoDetalleModel.update(pedidoDetalleActualizado,{ where: { pedido_id: pedido_id, id } });
+
+    return id;
+  } catch (error) {
+    console.error("Error al eliminar el item del pedido:", error);
+    throw error;
+  }
+}
