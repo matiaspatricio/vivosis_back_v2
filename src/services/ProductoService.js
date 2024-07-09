@@ -69,7 +69,7 @@ exports.updateProducto = async (id, productoActualizado) => {
   }
 };
 
-exports.deleteProducto = async (id) => {
+exports.deleteProducto = async (id) => {// funcion para bajar stock por eliminado logico de un item de pedido
   return await ProductoModel.destroy({ where: { id } });
 };
 exports.actualizarStock = async (id, cantidad) => {
@@ -95,3 +95,49 @@ exports.actualizarStock = async (id, cantidad) => {
     );
   }
 };
+
+exports.actualizarStockPorEliminadoLogico = async (id, cantidad) => {
+  try {
+    console.log("id, cantidad", id, cantidad);
+    // Buscar el producto por su ID
+    const producto = await ProductoModel.findByPk(id);
+
+    if (!producto) {
+      throw new Error("Producto no encontrado");
+    }
+
+    // Actualizar el stock del producto
+    producto.stock = producto.stock + cantidad;
+
+    // Guardar los cambios en la base de datos
+    await producto.save();
+
+    return producto;
+  } catch (error) {
+    throw new Error(
+      "Error al actualizar el stock del producto: " + error.message
+    );
+  }
+};
+exports.eliminadoLogicoCabeceraPedido = async (id) => {
+  try {
+    // Buscar el producto por su ID
+    const producto = await ProductoModel.findByPk(id);
+
+    if (!producto) {
+      throw new Error("Producto no encontrado");
+    }
+
+    // Actualizar el stock del producto
+    producto.stock = producto.stock + cantidad;
+
+    // Guardar los cambios en la base de datos
+    await producto.save();
+
+    return producto;
+  } catch (error) {
+    throw new Error(
+      "Error al actualizar el stock del producto: " + error.message
+    );
+  }
+}

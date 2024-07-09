@@ -8,19 +8,94 @@ const {
   startOfWeek,
   endOfWeek,
   startOfToday,
+  subMonths,
+  startOfMonth,
+  endOfMonth,
 } = require("date-fns");
 const timeZone = "America/Argentina/Buenos_Aires";
-const { Op } = require("sequelize");
+const { Op, where } = require("sequelize");
 const ClienteModel = require("../models/cliente");
 const ProductoModel = require("../models/producto");
 const ProductoService = require("./ProductoService");
+const { Sequelize } = require("sequelize");
+
+exports.getPedidoById = async (id) => {
+  try {
+    const pedidoCabecera = await PedidoCabeceraModel.findByPk(id, {
+      include: [
+        {
+          model: ClienteModel,
+          as: "Cliente",
+          attributes: ["id", "nombre"],
+        },
+        {
+          model: PedidoDetalleModel,
+          as: "Pedidos_detalles",
+          where: {
+            estado_item: {
+              [Op.notIn]: [3, 4, 6], // Excluye los estados 3, 4 y 6
+            },
+          },
+          include: [
+            {
+              model: ProductoModel, // Incluye el modelo de Producto
+              as: "Producto", // Alias para el modelo de Producto
+              attributes: ["id", "nombre"], // Especifica que quieres devolver el campo 'nombre'
+            },
+          ],
+        },
+      ],
+      where: {
+        estado_pedido: {
+          [Op.notIn]: [3, 4, 6], // Excluye los estados 3, 4 y 6
+        },
+      },
+    });
+
+    return pedidoCabecera;
+  } catch (error) {
+    console.error("Error al obtener el pedido por ID:", error);
+    throw error;
+  }
+};
+exports.getPedidoItemById = async (pedido_id, item_id) => {
+  try {
+    // Buscar el detalle del pedido por pedido_id y item_id
+    const pedidoDetalle = await PedidoDetalleModel.findOne({
+      where: {
+        id: item_id,
+        pedido_id: pedido_id,
+        estado_item: {
+          [Op.notIn]: [3, 4, 6], // Excluye los estados 3, 4 y 6
+        },
+      },
+
+      include: [
+        {
+          model: ProductoModel,
+          as: "Producto",
+          attributes: ["id", "nombre"],
+        },
+      ],
+    });
+
+    if (!pedidoDetalle) {
+      throw new Error("Item no encontrado");
+    }
+
+    return pedidoDetalle;
+  } catch (error) {
+    console.error("Error al obtener el item del pedido por ID:", error);
+    throw error;
+  }
+};
 
 exports.getPedidosPendientes = async () => {
   try {
     const pedidosPendientes = await PedidoCabeceraModel.findAll({
       where: {
         estado_pedido: {
-          [Op.notIn]: [3, 4],
+          [Op.notIn]: [3, 4, 6],
         },
       },
       include: [
@@ -78,163 +153,149 @@ exports.getAllPedidos = async () => {
 };
 
 exports.getPedidosHoy = async () => {
+  const timeZone = "America/Argentina/Buenos_Aires";
+  const today = utcToZonedTime(new Date(), timeZone);
+  const startOfToday = startOfDay(today);
+  const endOfToday = endOfDay(today);
+
   try {
-    const today = utcToZonedTime(new Date(), timeZone);
-    const startOfTodayDate = zonedTimeToUtc(startOfDay(today), timeZone);
-    const endOfToday = zonedTimeToUtc(endOfDay(today), timeZone);
-
-    console.log(startOfTodayDate);
-    console.log(endOfToday);
-    const pedidosHoy = await PedidoCabeceraModel.findAll({
-      where: {
-        fecha: {
-          [Op.between]: [startOfTodayDate, endOfToday],
-        },
-      },
-      include: [
-        {
-          model: PedidoDetalleModel,
-          as: "Pedidos_detalles",
-        },
-        {
-          model: ClienteModel,
-          as: "Cliente",
-          attributes: ["id", "nombre"],
-        },
+    const resultado = await PedidoDetalleModel.findAll({
+      attributes: [
+        [Sequelize.fn("SUM", Sequelize.col("total")), "totalSum"],
+        [Sequelize.fn("COUNT", Sequelize.col("id")), "totalItems"] // Asumiendo que 'id' es una columna que quieres contar
       ],
-      order: [["id", "DESC"]],
+      where: { fecha: { [Op.between]: [startOfToday, endOfToday] } },
+      raw: true,
     });
-
-    return pedidosHoy;
+    return resultado;
   } catch (error) {
-    console.error("Error al obtener los pedidos de hoy:", error);
+    console.error(
+      "Error al obtener la suma del total y el conteo de los pedidos de hoy:",
+      error
+    );
     throw error;
   }
 };
-
 exports.getPedidosAyer = async () => {
+  const timeZone = "America/Argentina/Buenos_Aires";
+  const yesterday = utcToZonedTime(subDays(new Date(), 1), timeZone);
+  const startOfYesterday = startOfDay(yesterday);
+  const endOfYesterday = endOfDay(yesterday);
+
   try {
-    const yesterday = utcToZonedTime(subDays(new Date(), 1), timeZone);
-    const startOfYesterday = zonedTimeToUtc(startOfDay(yesterday), timeZone);
-    const endOfYesterday = zonedTimeToUtc(endOfDay(yesterday), timeZone);
-
-    const pedidosAyer = await PedidoCabeceraModel.findAll({
-      where: {
-        fecha: {
-          [Op.between]: [startOfYesterday, endOfYesterday],
-        },
-      },
-      include: [
-        {
-          model: PedidoDetalleModel,
-          as: "Pedidos_detalles",
-        },
-        {
-          model: ClienteModel,
-          attributes: ["id", "nombre"],
-        },
+    const resultado = await PedidoDetalleModel.findAll({
+      attributes: [
+        [Sequelize.fn("SUM", Sequelize.col("total")), "totalSum"],
+        [Sequelize.fn("COUNT", Sequelize.col("id")), "totalItems"] // Asumiendo que 'id' es una columna que quieres contar
       ],
-      order: [["id", "DESC"]],
+      where: { fecha: { [Op.between]: [startOfYesterday, endOfYesterday] } },
+      raw: true,
     });
-
-    return pedidosAyer;
+    return resultado;
   } catch (error) {
-    console.error("Error al obtener los pedidos de ayer:", error);
+    console.error(
+      "Error al obtener la suma del total y el conteo de los pedidos de ayer:",
+      error
+    );
     throw error;
   }
 };
-
 exports.getPedidosSemana = async () => {
+  const timeZone = "America/Argentina/Buenos_Aires"; // Asegúrate de definir la zona horaria correctamente
+  const today = zonedTimeToUtc(startOfToday(), timeZone);
+  const startOfThisWeek = startOfWeek(today, { weekStartsOn: 1 }); // Asumiendo que la semana comienza el lunes
+  const endOfThisWeek = endOfDay(today);
+  
   try {
-    const today = zonedTimeToUtc(startOfToday(), timeZone);
-    const startOfThisWeek = startOfWeek(today, { weekStartsOn: 1 }); // 1 represents Monday as the start of the week
-    const endOfThisWeek = endOfWeek(today, { weekStartsOn: 1 });
-
-    const pedidosSemana = await PedidoCabeceraModel.findAll({
-      where: {
-        fecha: {
-          [Op.between]: [startOfThisWeek, endOfThisWeek],
-        },
-      },
-      include: [
-        {
-          model: PedidoDetalleModel,
-          as: "Pedidos_detalles",
-        },
-        {
-          model: ClienteModel,
-          attributes: ["id", "nombre"],
-        },
+    const resultado = await PedidoDetalleModel.findAll({
+      attributes: [
+        [Sequelize.fn("SUM", Sequelize.col("total")), "totalSum"],
+        [Sequelize.fn("COUNT", Sequelize.col("id")), "totalItems"] // Asumiendo que 'id' es una columna que quieres contar
       ],
-      order: [["id", "DESC"]],
+      where: { fecha: { [Op.between]: [startOfThisWeek, endOfThisWeek] } },
+      raw: true,
     });
-
-    return pedidosSemana;
+    return resultado;
   } catch (error) {
-    console.error("Error al obtener los pedidos de la semana:", error);
+    console.error(
+      "Error al obtener la suma del total y el conteo de los pedidos de la semana:",
+      error
+    );
     throw error;
   }
 };
-
 exports.getPedidosSemanaAnterior = async () => {
+  const timeZone = "America/Argentina/Buenos_Aires"; // Asegúrate de definir la zona horaria correctamente
+  const today = zonedTimeToUtc(startOfToday(), timeZone);
+  const startOfLastWeek = startOfWeek(subDays(today, 7), { weekStartsOn: 1 }); // Asumiendo que la semana comienza el lunes
+  const endOfLastWeek = endOfDay(subDays(today, 7));
+
   try {
-    const today = zonedTimeToUtc(startOfToday(), timeZone);
-    const startOfLastWeek = startOfWeek(subDays(today, 7), { weekStartsOn: 1 }); // Substract 7 days to get the start of the previous week
-    const endOfLastWeek = endOfWeek(subDays(today, 7), { weekStartsOn: 1 });
-
-    // Ajustar las fechas para que sean la última hora del día
-    const endOfLastWeekWithTime = new Date(endOfLastWeek.getTime() + 86399999);
-
-    const pedidosSemanaAnterior = await PedidoCabeceraModel.findAll({
-      where: {
-        fecha: {
-          [Op.between]: [startOfLastWeek, endOfLastWeekWithTime],
-        },
-      },
-      include: [
-        {
-          model: PedidoDetalleModel,
-          as: "Pedidos_detalles",
-        },
-        {
-          model: ClienteModel,
-          attributes: ["id", "nombre"],
-        },
+    const resultado = await PedidoDetalleModel.findAll({
+      attributes: [
+        [Sequelize.fn("SUM", Sequelize.col("total")), "totalSum"],
+        [Sequelize.fn("COUNT", Sequelize.col("id")), "totalItems"] // Asumiendo que 'id' es una columna que quieres contar
       ],
-      order: [["id", "DESC"]],
+      where: { fecha: { [Op.between]: [startOfLastWeek, endOfLastWeek] } },
+      raw: true,
     });
-
-    return pedidosSemanaAnterior;
+    return resultado;
   } catch (error) {
-    console.error("Error al obtener los pedidos de la semana anterior:", error);
+    console.error(
+      "Error al obtener la suma del total y el conteo de los pedidos de la semana anterior:",
+      error
+    );
     throw error;
   }
 };
 
-exports.getPedidosMes = async (startOfMonth, endOfMonth) => {
-  try {
-    const pedidosMes = await PedidoCabeceraModel.findAll({
-      where: {
-        fecha: {
-          [Op.between]: [startOfMonth, endOfMonth],
-        },
-      },
-      include: [
-        {
-          model: PedidoDetalleModel,
-          as: "Pedidos_detalles",
-        },
-        {
-          model: ClienteModel,
-          attributes: ["id", "nombre"],
-        },
-      ],
-      order: [["id", "DESC"]],
-    });
 
-    return pedidosMes;
+exports.getPedidosMes = async () => {
+  const timeZone = "America/Argentina/Buenos_Aires"; // Asegúrate de definir la zona horaria correctamente
+  const today = zonedTimeToUtc(startOfToday(), timeZone);
+  const startOfThisMonth = startOfMonth(today);
+  const endOfThisMonth = endOfDay(today);
+
+  try {
+    const resultado = await PedidoDetalleModel.findAll({
+      attributes: [
+        [Sequelize.fn("SUM", Sequelize.col("total")), "totalSum"],
+        [Sequelize.fn("COUNT", Sequelize.col("id")), "totalItems"] // Asumiendo que 'id' es una columna que quieres contar
+      ],
+      where: { fecha: { [Op.between]: [startOfThisMonth, endOfThisMonth] } },
+      raw: true,
+    });
+    return resultado;
   } catch (error) {
-    console.error("Error al obtener los pedidos del mes:", error);
+    console.error(
+      "Error al obtener la suma del total y el conteo de los pedidos del mes:",
+      error
+    );
+    throw error;
+  }
+};
+
+exports.getPedidosMesAnterior = async () => {
+  const timeZone = "America/Argentina/Buenos_Aires"; // Asegúrate de definir la zona horaria correctamente
+  const today = zonedTimeToUtc(startOfToday(), timeZone);
+  const startOfLastMonth = startOfMonth(subMonths(today, 1));
+  const endOfLastMonth = endOfDay(subMonths(today, 1));
+
+  try {
+    const resultado = await PedidoDetalleModel.findAll({
+      attributes: [
+        [Sequelize.fn("SUM", Sequelize.col("total")), "totalSum"],
+        [Sequelize.fn("COUNT", Sequelize.col("id")), "totalItems"] // Asumiendo que 'id' es una columna que quieres contar
+      ],
+      where: { fecha: { [Op.between]: [startOfLastMonth, endOfLastMonth] } },
+      raw: true,
+    });
+    return resultado;
+  } catch (error) {
+    console.error(
+      "Error al obtener la suma del total y el conteo de los pedidos del mes anterior:",
+      error
+    );
     throw error;
   }
 };
@@ -263,61 +324,6 @@ exports.createPedido = async (pedido) => {
     return pedidoCreado;
   } catch (error) {
     console.error("Error al crear el pedido:", error);
-    throw error;
-  }
-};
-
-exports.getPedidoById = async (id) => {
-  try {
-    const pedidoCabecera = await PedidoCabeceraModel.findByPk(id, {
-      include: [
-        {
-          model: ClienteModel,
-          as: "Cliente",
-          attributes: ["id", "nombre"],
-        },
-        {
-          model: PedidoDetalleModel,
-          as: "Pedidos_detalles",
-          include: [
-            {
-              model: ProductoModel, // Incluye el modelo de Producto
-              as: "Producto", // Alias para el modelo de Producto
-              attributes: ["id", "nombre"], // Especifica que quieres devolver el campo 'nombre'
-            },
-          ],
-        },
-      ],
-    });
-
-    return pedidoCabecera;
-  } catch (error) {
-    console.error("Error al obtener el pedido por ID:", error);
-    throw error;
-  }
-};
-
-exports.getPedidoItemById = async (pedido_id, item_id) => {
-  try {
-    // Buscar el detalle del pedido por pedido_id y item_id
-    const pedidoDetalle = await PedidoDetalleModel.findOne({
-      where: { id: item_id, pedido_id: pedido_id },
-      include: [
-        {
-          model: ProductoModel,
-          as: "Producto",
-          attributes: ["id", "nombre"],
-        },
-      ],
-    });
-
-    if (!pedidoDetalle) {
-      throw new Error("Item no encontrado");
-    }
-
-    return pedidoDetalle;
-  } catch (error) {
-    console.error("Error al obtener el item del pedido por ID:", error);
     throw error;
   }
 };
@@ -371,71 +377,55 @@ exports.updatePedidoDetalle = async (pedidoDetalleActualizado) => {
   }
 };
 
-/*
-
-exports.updatePedido = async (pedidoActualizado) => {
+exports.updatePedidoItem = async (pedido_id, id, pedidoDetalleActualizado) => {
   try {
-    const pedidoCabecera = await PedidoCabeceraModel.findByPk(
-      pedidoActualizado.id
+    console.log("ingresando a pedido_detalle_id", pedido_id, id);
+    // Eliminar los detalles del pedido
+    await PedidoDetalleModel.update(pedidoDetalleActualizado, {
+      where: { pedido_id: pedido_id, id },
+    });
+
+    return id;
+  } catch (error) {
+    console.error("Error al eliminar el item del pedido:", error);
+    throw error;
+  }
+};
+
+exports.eliminadoLogicoItemPedido = async (pedido_id, id) => {
+  try {
+    console.log("ingresando a pedido_detalle_id", pedido_id, id);
+    // Contar los items activos antes de eliminar
+    const itemsActivos = await PedidoDetalleModel.count({
+      where: {
+        pedido_id: pedido_id,
+        estado_item: {
+          [Op.not]: 6, // Asume que el estado 6 significa eliminado lógicamente
+        },
+      },
+    });
+
+    // Eliminar los detalles del pedido
+    await PedidoDetalleModel.update(
+      { estado_item: 6, estado_pago_item: 6 },
+      { where: { pedido_id: pedido_id, id: id } }
     );
-    if (!pedidoCabecera) {
-      throw new Error("Pedido no encontrado");
+    const item = await PedidoDetalleModel.findOne({
+      where: { id: id, pedido_id: pedido_id },
+    });
+    await ProductoService.actualizarStockPorEliminadoLogico(
+      item.producto_id,
+      item.cantidad
+    );
+
+    // Si era el último item activo, marcar la cabecera como eliminada lógicamente
+    if (itemsActivos === 1) {
+      // Si solo había un item activo antes de eliminar
+      await PedidoCabeceraModel.update(
+        { estado_pedido: 6 },
+        { where: { id: pedido_id } }
+      ); // Asume que el estado 6 significa eliminado lógicamente
     }
-    //validar si es solo actualización de cabecera
-    if (pedidoActualizado.isCabecera) {
-      // Actualizar los campos deseados del pedido
-      await pedidoCabecera.update(pedidoActualizado);
-      return pedidoCabecera;
-    }
-
-    // Actualizar los campos deseados del pedido
-    // await pedidoCabecera.update(pedidoActualizado);
-
-    // Actualizar los detalles del pedido
-    // si isDetalle es true, se actualizan los detalles
-    if (isDetalle) {
-      // Eliminar los detalles del pedido
-      
-      await PedidoDetalleModel.destroy({
-        where: { pedido_cabecera_id: pedidoCabecera.id },
-      });
-      await PedidoDetalleModel.bulkCreate(
-        pedidoActualizado.detalles.map((detalle) => ({
-          ...detalle,
-          pedido_cabecera_id: pedidoCabecera.id,
-        }))
-      );
-    }
-    // El pedido actualizado se encuentra ahora en el objeto 'pedidoCabecera'
-
-    return pedidoCabecera;
-  } catch (error) {
-    console.error("Error al actualizar el pedido:", error);
-    throw error;
-  }
-};*/
-
-exports.deletePedido = async (id) => {
-  try {
-    // Eliminar los detalles del pedido
-    console.log("ingresando a pedido_cabecera_id", id);
-    await PedidoDetalleModel.destroy({ where: { pedido_id: id } });
-
-    // Eliminar la cabecera del pedido
-    const deletedRows = await PedidoCabeceraModel.destroy({ where: { id } });
-
-    return deletedRows;
-  } catch (error) {
-    console.error("Error al eliminar el pedido:", error);
-    throw error;
-  }
-};
-
-exports.deleteItemPedido = async (pedido_id, id) => {
-  try {
-    console.log("ingresando a pedido_detalle_id",pedido_id, id);
-    // Eliminar los detalles del pedido
-    await PedidoDetalleModel.destroy({ where: { pedido_id: pedido_id, id } });
 
     return id;
   } catch (error) {
@@ -443,28 +433,38 @@ exports.deleteItemPedido = async (pedido_id, id) => {
     throw error;
   }
 };
-exports.eliminadoLogicoItemPedido = async (pedido_id, id,producto_id,cantidad) => {
+
+exports.eliminadoLogicoCabeceraPedido = async (id) => {
   try {
-    console.log("ingresando a pedido_detalle_id",pedido_id, id);
-    // Eliminar los detalles del pedido
-    await PedidoDetalleModel.update({estado_item: 6, estado_pago_item: 6},{ where: { pedido_id: pedido_id, id } });
-    await ProductoService.actualizarStock(producto_id,cantidad);
+    console.log("ingresando a pedido_id", id);
+    // Eliminar lógicamente la cabecera del pedido
+    await PedidoCabeceraModel.update({ estado_pedido: 6 }, { where: { id } });
+
+    // Asumiendo que existe un modelo PedidoDetalleModel para los ítems del pedido
+    // y que 'estado_item' es el campo que indica el estado del ítem (6 para eliminado)
+    await PedidoDetalleModel.update(
+      { estado_item: 6 },
+      { where: { pedido_id: id } }
+    );
+
     return id;
   } catch (error) {
     console.error("Error al eliminar el item del pedido:", error);
     throw error;
   }
-}
+};
 
 exports.updatePedidoItem = async (pedido_id, id, pedidoDetalleActualizado) => {
   try {
-    console.log("ingresando a pedido_detalle_id",pedido_id, id);
+    console.log("ingresando a pedido_detalle_id", pedido_id, id);
     // Eliminar los detalles del pedido
-    await PedidoDetalleModel.update(pedidoDetalleActualizado,{ where: { pedido_id: pedido_id, id } });
+    await PedidoDetalleModel.update(pedidoDetalleActualizado, {
+      where: { pedido_id: pedido_id, id },
+    });
 
     return id;
   } catch (error) {
     console.error("Error al eliminar el item del pedido:", error);
     throw error;
   }
-}
+};

@@ -1,5 +1,53 @@
 const PedidoService = require("../services/PedidoService");
 //const PedidoModel = require("../models/pedido")
+exports.getPedidosHoy = async (req, res) => {
+  try {
+    const pedidos = await PedidoService.getPedidosHoy();
+    res.json(pedidos);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.getTotalesDashboard = async (req, res) => {
+  try {
+    console.log("ingresando al controlador de totales")
+    // Llamadas asincrónicas a cada método para obtener los totales
+    const pedidosHoy = await PedidoService.getPedidosHoy();
+    console.log("pedidosHoy", pedidosHoy)
+    const pedidosAyer = await PedidoService.getPedidosAyer();
+    console.log("pedidosAyer", pedidosAyer)
+    const pedidosSemana = await PedidoService.getPedidosSemana();    
+    console.log("pedidosSemana", pedidosSemana)
+    const pedidosSemanaAnterior = await PedidoService.getPedidosSemanaAnterior();
+    console.log("pedidosSemanaAnterior", pedidosSemanaAnterior)
+    const pedidosMes = await PedidoService.getPedidosMes();
+    console.log("pedidosMes", pedidosMes)        
+    const pedidosMesAnterior = await PedidoService.getPedidosMesAnterior();
+    console.log("pedidosMesAnterior", pedidosMesAnterior)
+
+    // Construcción del objeto de respuesta
+    const totalesDashboard = {
+      pedidosHoy: pedidosHoy, // Asegúrate de que estos métodos devuelvan un objeto con una propiedad 'total'
+      pedidosAyer: pedidosAyer,
+      pedidosSemana: pedidosSemana,
+      pedidosSemanaAnterior: pedidosSemanaAnterior,
+      pedidosMes: pedidosMes,
+      pedidosMesAnterior: pedidosMesAnterior,
+    };
+    console.log("Totales para el dashboard:", totalesDashboard);
+
+    // Envío del objeto de respuesta
+    res.json(totalesDashboard);
+  } catch (error) {
+    console.log("Error al obtener los totales para el dashboard:", error);
+    res
+      .status(500)
+      .json({
+        error: "Ocurrió un error al obtener los totales para el dashboard",
+      });
+  }
+};
 
 exports.getAllPedidos = async (req, res) => {
   try {
@@ -19,86 +67,6 @@ exports.getPedidosPendientes = async (req, res) => {
   }
 };
 
-exports.getPedidosHoy = async (req, res) => {
-  try {
-    const pedidos = await PedidoService.getPedidosHoy();
-    res.json(pedidos);
-  } catch (error) {
-    console.log("Error al obtener los pedidos de hoy:", error);
-    res
-      .status(500)
-      .json({ error: "Ocurrió un error al obtener los pedidos de hoy" });
-  }
-};
-
-exports.getPedidosAyer = async (req, res) => {
-  try {
-    const pedidosAyer = await PedidoService.getPedidosAyer();
-    res.json(pedidosAyer);
-  } catch (error) {
-    console.log("Error al obtener los pedidos de ayer:", error);
-    res
-      .status(500)
-      .json({ error: "Ocurrió un error al obtener los pedidos de ayer" });
-  }
-};
-
-exports.getPedidosSemana = async (req, res) => {
-  try {
-    const pedidosSemana = await PedidoService.getPedidosSemana();
-    res.json(pedidosSemana);
-  } catch (error) {
-    console.log("Error al obtener los pedidos de la semana:", error);
-    res
-      .status(500)
-      .json({ error: "Ocurrió un error al obtener los pedidos de la semana" });
-  }
-};
-exports.getPedidosSemanaAnterior = async (req, res) => {
-  try {
-    const pedidos = await PedidoService.getPedidosSemanaAnterior();
-    res.status(200).json(pedidos);
-  } catch (error) {
-    console.error("Error al obtener los pedidos de la semana anterior:", error);
-    res
-      .status(500)
-      .json({
-        error: "Ocurrió un error al obtener los pedidos de la semana anterior",
-      });
-  }
-};
-
-exports.getPedidosMes = async (req, res) => {
-  try {
-    const currentDate = new Date();
-    const startOfMonth = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth(),
-      1
-    );
-    const endOfMonth = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() + 1,
-      0,
-      23,
-      59,
-      59,
-      999
-    );
-
-    const pedidosMes = await PedidoService.getPedidosMes(
-      startOfMonth,
-      endOfMonth
-    );
-    res.json(pedidosMes);
-  } catch (error) {
-    console.log("Error al obtener los pedidos del mes:", error);
-    res
-      .status(500)
-      .json({ error: "Ocurrió un error al obtener los pedidos del mes" });
-  }
-};
-
 exports.createPedido = async (req, res) => {
   try {
     const pedido = await PedidoService.createPedido(req.body);
@@ -110,7 +78,7 @@ exports.createPedido = async (req, res) => {
 
 exports.getPedidoById = async (req, res) => {
   try {
-    const pedido = await PedidoService.getPedidoById(req.params.id);
+    const pedido = await PedidoService.getPedidoById(req.params.pedido_id);
     res.json(pedido);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -119,17 +87,9 @@ exports.getPedidoById = async (req, res) => {
 
 exports.getPedidoItemById = async (req, res) => {
   try {
-    const pedido = await PedidoService.getPedidoItemById(req.params.pedido_id, req.params.id);
-    res.json(pedido);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-}
-
-exports.getPedidoByCliente = async (req, res) => {
-  try {
-    const pedido = await PedidoService.getPedidoByCliente(
-      req.params.id_cliente
+    const pedido = await PedidoService.getPedidoItemById(
+      req.params.pedido_id,
+      req.params.id
     );
     res.json(pedido);
   } catch (err) {
@@ -137,9 +97,11 @@ exports.getPedidoByCliente = async (req, res) => {
   }
 };
 
-exports.updatePedido = async (req, res) => {
+exports.getPedidoByCliente = async (req, res) => {
   try {
-    const pedido = await PedidoService.updatePedido(req.body);
+    const pedido = await PedidoService.getPedidoByCliente(
+      req.params.id_cliente
+    );
     res.json(pedido);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -160,7 +122,17 @@ exports.updatePedidoCabecera = async (req, res) => {
 
 exports.updatePedidoDetalle = async (req, res) => {
   try {
-    const pedido = await PedidoService.updatePedidoDetalle(      
+    const pedido = await PedidoService.updatePedidoDetalle(req.body);
+    res.json(pedido);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+exports.updatePedidoItem = async (req, res) => {
+  try {
+    const pedido = await PedidoService.updatePedidoItem(
+      req.params.pedido_id,
+      req.params.id,
       req.body
     );
     res.json(pedido);
@@ -169,28 +141,24 @@ exports.updatePedidoDetalle = async (req, res) => {
   }
 };
 
-exports.deletePedido = async (req, res) => {
-  try {
-    const pedido = await PedidoService.deletePedido(req.params.id);
-    res.json(pedido);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-exports.deleteItemPedido = async (req, res) => {
-  try {    
-    const pedido = await PedidoService.deleteItemPedido(req.body.pedido_id,req.body.id);
-    res.json(pedido);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
 exports.eliminadoLogicoItemPedido = async (req, res) => {
-  try {    
-    const pedido = await PedidoService.eliminadoLogicoItemPedido(req.body.pedido_id,req.body.id,req.body.producto_id,req.body.cantidad);
+  try {
+    const pedido = await PedidoService.eliminadoLogicoItemPedido(
+      req.body.pedido_id,
+      req.body.id
+    );
     res.json(pedido);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-}
+};
+exports.eliminadoLogicoCabeceraPedido = async (req, res) => {
+  try {
+    const pedido = await PedidoService.eliminadoLogicoCabeceraPedido(
+      req.params.id
+    );
+    res.json(pedido);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
